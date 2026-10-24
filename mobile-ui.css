@@ -1,0 +1,46 @@
+.mobile-quicknav { display: none; }
+
+@media (max-width: 680px) {
+  html, body, #app { height: 100dvh; }
+  #app { grid-template-rows: minmax(0, 60%) minmax(0, 40%); }
+  #viewport { min-height: 0; }
+  #scene { touch-action: none; }
+  .panel { min-height: 0; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
+  .mobile-quicknav {
+    position: sticky; top: -14px; z-index: 7;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;
+    margin: 0 -16px 8px; padding: 9px 16px;
+    background: #1b1d2b; border-bottom: 1px solid #ffffff18;
+  }
+  .mobile-quicknav button {
+    min-height: 44px; padding: 6px 3px; border: 1px solid #ffffff27;
+    border-radius: 9px; background: #ffffff09; color: #f3eee6;
+    font-size: 11px; font-weight: 650; white-space: nowrap;
+  }
+  .mobile-quicknav button:active { background: #8ce0d233; }
+  #sceneControls, #environmentControls, #audioControls { scroll-margin-top: 60px; }
+  .scene-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: none; overflow: visible; }
+  .scene-tab { min-height: 51px; padding: 7px 9px; gap: 8px; }
+  .scene-tab .tab-icon { width: 28px; height: 30px; }
+  .scene-tab b { font-size: 11px; line-height: 1.35; }
+  .scene-tab small { font-size: 9px; }
+  .newsstand-jump, .segmented button, .weather-option, .walk-controls button, .look-controls button,
+  #importPosterBtn, .audio-start, .capture, .reset { min-height: 44px; }
+  .walk-controls { margin: 0 0 10px; padding: 7px; }
+  .walk-controls button { flex: 1; font-size: 12px; }
+  .walk-controls span { min-width: 80px; text-align: center; font-size: 10px; }
+  .look-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0 0 10px; }
+  .look-controls button { font-size: 11px; }
+  .weather-option { font-size: 11px; }
+  .device { min-height: 44px; }
+  .device input { width: 42px; height: 36px; right: 3px; }
+  .audio-switches label { min-height: 36px; font-size: 12px; }
+  .audio-volume { grid-template-columns: 73px 1fr; min-height: 38px; font-size: 12px; }
+  .audio-volume input { min-height: 30px; }
+  .topbar { top: calc(10px + env(safe-area-inset-top)); }
+  .scene-title { top: calc(70px + env(safe-area-inset-top)); max-width: calc(100% - 30px); }
+  .scene-title h1 { font-size: 20px; line-height: 1.18; }
+  .scene-title p { max-width: 270px; line-height: 1.35; }
+  .scene-bottom { bottom: 9px; }
+  .scene-bottom > span:not(.bottom-right), .scene-bottom > b { display: none; }
+}
