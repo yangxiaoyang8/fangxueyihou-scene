@@ -1,29 +1,57 @@
 .mobile-quicknav { display: none; }
+.mobile-control-view { display: contents; }
+.floating-capture { position: absolute; z-index: 6; top: 64px; right: 18px; display: flex; gap: 6px; width: auto; }
+.floating-capture .capture { min-height: 38px; padding: 7px 9px; white-space: nowrap; background: #222536d9; backdrop-filter: blur(10px); }
+
+.panel-actions { display: flex; align-items: center; gap: 8px; }
+.mobile-panel-toggle { display: none; }
+.store-quick-controls { margin: 10px 0 12px; padding: 10px; border: 1px solid #8ce0d228; border-radius: 12px; background: linear-gradient(135deg, #8ce0d20d, #ffffff05); }
+.quick-controls-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.quick-controls-heading b { font-size: 11px; }
+.quick-controls-heading small { color: var(--muted); font-size: 10px; }
+.store-quick-controls .wide-toggle { margin-top: 7px; }
+.store-quick-controls .device { margin-top: 6px; min-height: 42px; }
 
 @media (max-width: 680px) {
-  html, body, #app { height: 100dvh; }
-  #app { grid-template-rows: minmax(0, 60%) minmax(0, 40%); }
-  #viewport { min-height: 0; }
+  html, body, #app { width: 100%; height: 100dvh; min-height: 100dvh; overflow: hidden; }
+  #app { display: block; position: relative; padding: 0; }
+  #viewport { position: absolute; inset: 0; min-height: 0; border: 0; border-radius: 0; }
   #scene { touch-action: none; }
-  .panel { min-height: 0; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding-bottom: calc(18px + env(safe-area-inset-bottom)); }
+  .panel { position: absolute; z-index: 7; left: 8px; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom)); width: auto; min-height: 0; max-height: 78dvh; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 0 14px calc(10px + env(safe-area-inset-bottom)); border: 1px solid #ffffff22; border-radius: 18px; background: #191b28f2; box-shadow: 0 12px 40px #0008; backdrop-filter: blur(18px); }
+  .panel.is-collapsed { height: 66px; max-height: 66px; overflow: hidden; }
+  .panel.is-collapsed > :not(.panel-head) { display: none; }
+  .panel-head { position: sticky; top: 0; z-index: 8; min-height: 62px; margin: 0 -14px 7px; padding: 8px 12px 8px 14px; background: #202232f5; border-radius: 18px 18px 0 0; }
+  .panel-head h2 { margin: 2px 0 0; font-size: 17px; }
+  .panel-head .eyebrow { font-size: 8px; }
+  .panel-actions { gap: 6px; }
+  .mobile-panel-toggle { display: flex; align-items: center; justify-content: center; gap: 4px; min-width: 78px; min-height: 42px; padding: 7px 10px; border: 1px solid #8ce0d255; border-radius: 11px; background: #8ce0d219; color: #d8fff6; font-size: 12px; font-weight: 700; }
+  .mobile-panel-chevron { font-size: 17px; line-height: 1; }
+  .reset { min-height: 42px; padding: 7px 10px; }
   .mobile-quicknav {
-    position: sticky; top: -14px; z-index: 7;
-    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;
+    position: sticky; top: 62px; z-index: 7;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px;
     margin: 0 -16px 8px; padding: 9px 16px;
     background: #1b1d2b; border-bottom: 1px solid #ffffff18;
   }
   .mobile-quicknav button {
-    min-height: 44px; padding: 6px 3px; border: 1px solid #ffffff27;
+    min-height: 44px; padding: 6px 2px; border: 1px solid #ffffff27;
     border-radius: 9px; background: #ffffff09; color: #f3eee6;
-    font-size: 11px; font-weight: 650; white-space: nowrap;
+    font-size: 10px; font-weight: 650; white-space: nowrap;
   }
+  .mobile-quicknav button.active, .mobile-quicknav button[aria-selected="true"] { border-color: #8ce0d288; background: linear-gradient(135deg,#8ce0d233,#9c8be326); color: #c8fff1; box-shadow: inset 0 -2px #8ce0d2; }
   .mobile-quicknav button:active { background: #8ce0d233; }
-  #sceneControls, #environmentControls, #audioControls { scroll-margin-top: 60px; }
+  .mobile-control-view { display: none; }
+  .mobile-control-view.is-active { display: block; }
+  #sceneControls, #environmentControls, #audioControls { scroll-margin-top: 118px; }
   .scene-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); max-height: none; overflow: visible; }
   .scene-tab { min-height: 51px; padding: 7px 9px; gap: 8px; }
   .scene-tab .tab-icon { width: 28px; height: 30px; }
   .scene-tab b { font-size: 11px; line-height: 1.35; }
   .scene-tab small { font-size: 9px; }
+  .store-quick-controls { margin: 10px 0 12px; padding: 10px; }
+  .store-quick-controls .segmented button { min-height: 44px; font-size: 12px; }
+  .store-quick-controls .device { min-height: 46px; }
+  .store-quick-controls .device input { width: 48px; height: 40px; }
   .newsstand-jump, .segmented button, .weather-option, .walk-controls button, .look-controls button,
   #importPosterBtn, .audio-start, .capture, .reset { min-height: 44px; }
   .walk-controls { margin: 0 0 10px; padding: 7px; }
@@ -39,8 +67,13 @@
   .audio-volume input { min-height: 30px; }
   .topbar { top: calc(10px + env(safe-area-inset-top)); }
   .scene-title { top: calc(70px + env(safe-area-inset-top)); max-width: calc(100% - 30px); }
+  .scene-title { max-width: 58%; }
   .scene-title h1 { font-size: 20px; line-height: 1.18; }
   .scene-title p { max-width: 270px; line-height: 1.35; }
+  .floating-capture { top: calc(58px + env(safe-area-inset-top)); right: 12px; gap: 5px; }
+  .floating-capture .capture { min-height: 38px; padding: 6px 8px; font-size: 10px; }
   .scene-bottom { bottom: 9px; }
   .scene-bottom > span:not(.bottom-right), .scene-bottom > b { display: none; }
+  .scene-bottom { bottom: calc(82px + env(safe-area-inset-bottom)); left: 14px; right: 14px; }
+  #toast { bottom: calc(84px + env(safe-area-inset-bottom)); max-width: calc(100% - 28px); text-align: center; }
 }

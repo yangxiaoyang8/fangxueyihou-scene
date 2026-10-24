@@ -543,6 +543,15 @@ document.querySelector('#recordBtn').onclick=()=>{
 for(const id of ['closeHelp','gotIt'])document.querySelector('#'+id).onclick=()=>document.querySelector('#helpModal').classList.add('hidden');document.querySelector('#helpBtn').onclick=()=>document.querySelector('#helpModal').classList.remove('hidden');
 const gameStill=new Image(),tvStill=new Image();gameStill.src='./textures/fictional-cyber-screens-v1.jpg';tvStill.src='./textures/fictional-tv-stills-v1.jpg';
 const customScreens={tv:[],game:[]},customUrls={tv:[],game:[]};
+const videoMimeByExtension={mp4:'video/mp4',m4v:'video/mp4',mov:'video/quicktime',webm:'video/webm',ogv:'video/ogg'};
+const imageExtensions=/\.(avif|bmp|gif|jpe?g|png|webp)$/i;
+function mediaFileType(file){
+  const extension=(file.name.split('.').pop()||'').toLowerCase();
+  if(file.type.startsWith('video/'))return {kind:'video',mime:file.type};
+  if(videoMimeByExtension[extension])return {kind:'video',mime:videoMimeByExtension[extension]};
+  if(file.type.startsWith('image/')||imageExtensions.test(file.name))return {kind:'image',mime:file.type};
+  return null;
+}
 for(const [kind,button,input] of [['tv','importTvBtn','tvFiles'],['game','importGameBtn','gameFiles']]){
   document.querySelector('#'+button).onclick=()=>document.querySelector('#'+input).click();
   document.querySelector('#'+input).onchange=e=>{
@@ -550,19 +559,24 @@ for(const [kind,button,input] of [['tv','importTvBtn','tvFiles'],['game','import
     for(const url of customUrls[kind])URL.revokeObjectURL(url);
     customUrls[kind]=[];customScreens[kind]=[];
     const files=[...e.target.files],rejected=[];
+    if(!files.length){e.target.value='';return;}
     for(const file of files.slice(0,8)){
       if(kind==='tv'&&file.size>10*1024*1024){rejected.push(file.name+' 超过 10 MB');continue;}
-      const isVideo=kind==='tv'&&file.type.startsWith('video/');
-      if(!isVideo&&!file.type.startsWith('image/')){rejected.push(file.name+' 格式不支持');continue;}
+      const type=mediaFileType(file),isVideo=kind==='tv'&&type?.kind==='video';
+      if(!type||(!isVideo&&type.kind!=='image')){rejected.push(file.name+' 格式不支持');continue;}
       const source=isVideo?document.createElement('video'):new Image();
-      if(isVideo&&source.canPlayType(file.type)===''){rejected.push(file.name+' 浏览器不支持此视频编码');continue;}
       const url=URL.createObjectURL(file);customUrls[kind].push(url);customScreens[kind].push(source);
-      if(isVideo){source.muted=true;source.loop=true;source.playsInline=true;source.preload='auto';source.addEventListener('loadeddata',()=>{if(state.screens)source.play().catch(()=>toast('请点击页面后重试播放视频'));drawScreens(performance.now());},{once:true});source.addEventListener('error',()=>toast(file.name+' 无法解码，请换 MP4 或 WebM'),{once:true});}
-      else{source.dataset.animated=String(file.type==='image/gif');source.onload=()=>drawScreens(performance.now());source.onerror=()=>toast(file.name+' 图片加载失败');}
+      if(isVideo){
+        source.muted=true;source.loop=true;source.playsInline=true;source.preload='auto';source.setAttribute('playsinline','');
+        source.addEventListener('loadeddata',()=>{if(state.screens)source.play().catch(()=>toast('视频已载入；若未播放，请点一下屏幕'));drawScreens(performance.now());},{once:true});
+        source.addEventListener('error',()=>{const index=customScreens[kind].indexOf(source);if(index>=0)customScreens[kind].splice(index,1);const urlIndex=customUrls[kind].indexOf(url);if(urlIndex>=0)customUrls[kind].splice(urlIndex,1);URL.revokeObjectURL(url);drawScreens(performance.now());toast(file.name+' 无法解码；请用 MP4（H.264）或 WebM 重试');},{once:true});
+      }else{source.dataset.animated=String(type.mime==='image/gif'||file.name.toLowerCase().endsWith('.gif'));source.onload=()=>drawScreens(performance.now());source.onerror=()=>toast(file.name+' 图片加载失败');}
       source.src=url;
+      if(isVideo)source.load();
     }
+    if(files.length>8)rejected.push('一次最多导入 8 个文件');
     e.target.value='';
-    toast('已导入 '+customScreens[kind].length+' 个'+(kind==='tv'?'电视':'游戏')+'素材'+(rejected.length?'；'+rejected[0]:''));
+    toast('已选择 '+customScreens[kind].length+' 个'+(kind==='tv'?'电视':'游戏')+'素材'+(rejected.length?'；'+rejected[0]:''));
   };
 }
 document.querySelector('#importPosterBtn').onclick=()=>document.querySelector('#posterFiles').click();
