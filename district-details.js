@@ -1,5 +1,5 @@
-import * as T from 'three';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import * as T from './vendor/three.module.js';
+import {GLTFLoader} from './vendor/addons/loaders/GLTFLoader.js';
 import {RoundedBoxGeometry} from './vendor/RoundedBoxGeometry.js';
 
 // One image supplies many distinct object fronts; every packet and garment remains

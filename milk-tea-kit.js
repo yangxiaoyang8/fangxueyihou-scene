@@ -1,4 +1,4 @@
-import * as T from 'three';
+import * as T from './vendor/three.module.js';
 
 // Shared low-poly archetype: the cone's built-in groups UV-map its side and top separately.
 const cupGeometry=new T.CylinderGeometry(.103,.078,.35,36,1,false);

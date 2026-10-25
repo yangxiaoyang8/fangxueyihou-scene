@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="district-ui.css?v=3-side-rack" />
   <link rel="stylesheet" href="audio-ui.css?v=1" />
   <link rel="stylesheet" href="mobile-ui.css?v=1" />
-  <script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/addons/"}}</script>
 </head>
 <body>
   <main id="app">
@@ -73,7 +72,8 @@
     <div id="toast" role="status"></div>
     <div id="helpModal" class="modal hidden"><div class="modal-card"><button class="modal-close" id="closeHelp">×</button><span class="eyebrow">HOW TO PLAY</span><h2>探索街区</h2><p>拖动画面旋转街区，滚轮缩放。点击店铺进入内部，切换一层与二层；打开建筑剖面可查看室内。点击电视或电脑屏幕切换画面。也可在控制面板导入你已获授权的剧照或游戏图片，仅在本机预览。</p><p>时段、季节和天气可以任意组合。截屏会保存 PNG；录屏会录制当前场景，停止后自动下载 WebM。</p><button class="primary" id="gotIt">开始探索</button></div></div>
   </main>
+  <script src="startup-guard.js?v=1"></script>
   <script src="mobile-controls.js?v=4" defer></script>
-  <script type="module" src="scene-v2.js?v=89-mobile-tabs-video"></script>
+  <script type="module" src="scene-v2.js?v=90-relative-imports-mobile-compat"></script>
 </body>
 </html>

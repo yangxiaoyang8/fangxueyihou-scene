@@ -1,6 +1,6 @@
-import * as T from 'three';
-import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import * as T from './vendor/three.module.js';
+import {OrbitControls} from './vendor/addons/controls/OrbitControls.js';
+import {GLTFLoader} from './vendor/addons/loaders/GLTFLoader.js';
 import {mergeGeometries} from './vendor/BufferGeometryUtils.js';
 import {RoundedBoxGeometry} from './vendor/RoundedBoxGeometry.js';
 import {createDistrictKit} from './district-details.js?v=86-ridge-cap';

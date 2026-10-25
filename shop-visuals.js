@@ -1,4 +1,4 @@
-import * as T from 'three';
+import * as T from './vendor/three.module.js';
 import {createMilkTeaCup} from './milk-tea-kit.js?v=44-soft-mirror';
 
 // Object photography and period typography are deliberately separate layers:

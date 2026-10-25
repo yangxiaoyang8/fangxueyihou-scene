@@ -2,6 +2,9 @@
 .mobile-control-view { display: contents; }
 .floating-capture { position: absolute; z-index: 6; top: 64px; right: 18px; display: flex; gap: 6px; width: auto; }
 .floating-capture .capture { min-height: 38px; padding: 7px 9px; white-space: nowrap; background: #222536d9; backdrop-filter: blur(10px); }
+#loading.load-failed { flex-direction: column; gap: 11px; max-width: min(90%, 420px); padding: 18px; text-align: center; background: #171a2bf2; border: 1px solid #ffffff2b; border-radius: 16px; box-shadow: 0 12px 40px #0009; }
+#loading.load-failed small { max-width: 340px; color: #c6c8d2; font-size: 12px; line-height: 1.65; }
+#loading.load-failed button { min-height: 40px; padding: 8px 16px; border: 1px solid #8ce0d266; border-radius: 10px; background: #8ce0d219; color: #d8fff6; }
 
 .panel-actions { display: flex; align-items: center; gap: 8px; }
 .mobile-panel-toggle { display: none; }
