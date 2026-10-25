@@ -30,8 +30,8 @@ function draftTopTexture(v){
   const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;return tex;
 }
 const loader=new T.TextureLoader();
-const pearlSide=loader.load('./textures/tea-pearl-side-uv-v1.jpg');pearlSide.colorSpace=T.SRGBColorSpace;pearlSide.anisotropy=8;pearlSide.wrapS=T.RepeatWrapping;
-const pearlSeal=loader.load('./textures/tea-pearl-seal-uv-v1.png');pearlSeal.colorSpace=T.SRGBColorSpace;pearlSeal.anisotropy=8;
+const pearlSide=loader.load('./textures/fast/tea-pearl-side-uv-v1.webp');pearlSide.colorSpace=T.SRGBColorSpace;pearlSide.anisotropy=8;pearlSide.wrapS=T.RepeatWrapping;
+const pearlSeal=loader.load('./textures/fast/tea-pearl-seal-uv-v1.webp');pearlSeal.colorSpace=T.SRGBColorSpace;pearlSeal.anisotropy=8;
 function brandSide(source,i){const c=document.createElement('canvas');c.width=1024;c.height=512;const g=c.getContext('2d');const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;tex.wrapS=T.RepeatWrapping;
   const draw=()=>{if(source.image?.width)g.drawImage(source.image,0,0,1024,512);else{g.fillStyle=flavors[i].base;g.fillRect(0,0,1024,512);}
     // The photographic old-style tea skin stays on the tapered body. The seal

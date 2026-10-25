@@ -63,12 +63,12 @@ function texture(draw,size=512){const c=document.createElement('canvas');c.width
 function tiled(t,repeat=1){t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(repeat,repeat);return t;}
 const pbrLoader=new T.TextureLoader();
 const fasciaTextures={
-  fashion:pbrLoader.load('./textures/fashion-fascia-original-3to1-v3.jpg'),
-  bakery:pbrLoader.load('./textures/bakery-fascia-3to1-v1.jpg'),
-  shop:pbrLoader.load('./textures/hongxing-shop-fascia-3to1-v1.jpg')
+  fashion:pbrLoader.load('./textures/fast/fashion-fascia-original-3to1-v3.webp'),
+  bakery:pbrLoader.load('./textures/fast/bakery-fascia-3to1-v1.webp'),
+  shop:pbrLoader.load('./textures/fast/hongxing-shop-fascia-3to1-v1.webp')
 };
 for(const tex of Object.values(fasciaTextures)){tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;}
-function pbrMap(asset,kind){const t=pbrLoader.load('./textures/pbr/'+asset+'_1K-JPG_'+kind+'.jpg');if(kind==='Color')t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;return tiled(t,1);}
+function pbrMap(asset,kind){const t=pbrLoader.load('./textures/fast/pbr/'+asset+'_1K-JPG_'+kind+'.webp');if(kind==='Color')t.colorSpace=T.SRGBColorSpace;t.anisotropy=8;return tiled(t,1);}
 const plasterPBR={map:pbrMap('Plaster001','Color'),normalMap:pbrMap('Plaster001','NormalGL'),roughnessMap:pbrMap('Plaster001','Roughness')};
 const woodPBR={map:pbrMap('WoodSiding006','Color'),normalMap:pbrMap('WoodSiding006','NormalGL'),roughnessMap:pbrMap('WoodSiding006','Roughness')};
 const metalPBR={normalMap:pbrMap('Metal030','NormalGL'),roughnessMap:pbrMap('Metal030','Roughness')};
@@ -85,14 +85,14 @@ const roadMap=tiled(texture((c,s)=>{c.fillStyle='#4c4b53';c.fillRect(0,0,s,s);fo
 const asphalt=new T.MeshStandardMaterial({map:pbrMap('Asphalt010','Color'),normalMap:pbrMap('Asphalt010','NormalGL'),roughnessMap:pbrMap('Asphalt010','Roughness'),roughness:.95,normalScale:new T.Vector2(.65,.65)});
 for(const t of [asphalt.map,asphalt.normalMap,asphalt.roughnessMap])t.repeat.set(.25,.25);
 timber.userData.metersPerTile=2;
-const tileMap=new T.TextureLoader().load('./textures/terrazzo_floor.jpg');tileMap.colorSpace=T.SRGBColorSpace;tileMap.anisotropy=8;
+const tileMap=new T.TextureLoader().load('./textures/fast/terrazzo_floor.webp');tileMap.colorSpace=T.SRGBColorSpace;tileMap.anisotropy=8;
 const floorMat=new T.MeshStandardMaterial({map:tileMap,roughness:.65,bumpMap:tileMap,bumpScale:.008});floorMat.userData.metersPerTile=2;tiled(tileMap);
 const pavement=plaster('#b0a58f');
 pavement.userData.metersPerTile=2;
 weatherMaterials.push(weatherSurface(asphalt,.42),weatherSurface(pavement,.9));
 const brickFinish=new T.MeshStandardMaterial({map:pbrMap('Bricks051','Color'),normalMap:pbrMap('Bricks051','NormalGL'),roughnessMap:pbrMap('Bricks051','Roughness'),roughness:.92,normalScale:new T.Vector2(.7,.7)});brickFinish.userData.metersPerTile=2;
 const covers=Array.from({length:16},()=>new T.MeshStandardMaterial({color:'#b9a98b',roughness:.8,side:T.DoubleSide}));
-new T.TextureLoader().load('./textures/rental-books-atlas-v1.jpg',atlas=>{covers.forEach((material,i)=>{const tile=atlas.clone();tile.colorSpace=T.SRGBColorSpace;tile.repeat.set(.244,.244);tile.offset.set((i%4)*.25+.003,(3-Math.floor(i/4))*.25+.003);tile.anisotropy=8;tile.needsUpdate=true;material.map=tile;material.color.set('#ffffff');material.needsUpdate=true;});});
+new T.TextureLoader().load('./textures/fast/rental-books-atlas-v1.webp',atlas=>{covers.forEach((material,i)=>{const tile=atlas.clone();tile.colorSpace=T.SRGBColorSpace;tile.repeat.set(.244,.244);tile.offset.set((i%4)*.25+.003,(3-Math.floor(i/4))*.25+.003);tile.anisotropy=8;tile.needsUpdate=true;material.map=tile;material.color.set('#ffffff');material.needsUpdate=true;});});
 const bookPalette=['#975f50','#536a74','#987c57','#7b586d','#6b806f','#a86458','#59647b','#a28562'];
 const bookNames=['青春漫记','校园物语','少年侦探','旧城来信','武侠故事','仲夏日记','漫画精选','星空旅人','街角书屋','放学以后','奇妙旅程','年少时光','午夜电台','橘色黄昏','春日书简','纸上冒险'];
 const paperEdgeMap=texture((c,s)=>{c.fillStyle='#ddd1b7';c.fillRect(0,0,s,s);for(let y=0;y<s;y+=3){c.fillStyle=y%9?'#f7f0da8b':'#9d8d7059';c.fillRect(0,y,s,1);}},256);
@@ -103,7 +103,7 @@ function label(p,text,w,h,bg='#d5b568',fg='#4c3022',size=70){const c=document.cr
 function book(p,x,y,z,i,face=false){const h=.25+rand()*.12,w=face?.25:.055+rand()*.026,d=face?.032:.2,g=group(p,x,y,z);const materials=face?[bookSpines[i%16],bookSpines[i%16],paperEdge,paperEdge,covers[i%16],bookBacks[i%16]]:[covers[i%16],bookBacks[i%16],paperEdge,paperEdge,bookSpines[i%16],bookSpines[i%16]];box(g,w,h,d,materials,0,h/2,0);return g;}
 let bookcasePhoto=null;const bookcaseRows=[];
 function setBookcaseRow(material,row){if(!bookcasePhoto)return;const crop=bookcasePhoto.clone();crop.colorSpace=T.SRGBColorSpace;crop.repeat.set(1,1/6);crop.offset.y=row/6;crop.anisotropy=8;crop.needsUpdate=true;material.map=crop;material.color.set('#ffffff');material.needsUpdate=true;}
-new T.TextureLoader().load('./textures/rental-bookcase-face-v1.jpg',loaded=>{bookcasePhoto=loaded;for(const [material,row] of bookcaseRows)setBookcaseRow(material,row);});
+new T.TextureLoader().load('./textures/fast/rental-bookcase-face-v1.webp',loaded=>{bookcasePhoto=loaded;for(const [material,row] of bookcaseRows)setBookcaseRow(material,row);});
 function bookshelf(p,width=2.2,photo=false){const g=group(p);box(g,width,2.35,.12,timber,0,1.2,-.19);for(const x of [-width/2,width/2])box(g,.08,2.45,.44,timber,x,1.22,0);for(let row=0;row<5;row++){const y=.16+row*.46;box(g,width,.055,.48,timber,0,y,0);if(photo){const backdrop=new T.MeshStandardMaterial({color:'#b9a98b',roughness:.9});bookcaseRows.push([backdrop,row]);setBookcaseRow(backdrop,row);mesh(g,new T.PlaneGeometry(width-.13,.37),backdrop,0,y+.24,.105).castShadow=false;}else{let x=-width/2+.1;let i=0;while(x<width/2-.16){const face=i%4===0;book(g,x,y+.03,.03,(row*5+i)%16,face);x+=face?.3:.105;i++;}}}box(g,width+.1,.1,.5,timber,0,2.43,0);return g;}
 function stool(p,x,z,color='#ba5139',y=0){const g=group(p,x,y,z);box(g,.38,.08,.36,mat(color),0,.46,0);for(const dx of [-.13,.13])for(const dz of [-.12,.12]){rod(g,[dx,.44,dz],[dx*1.25,.02,dz*1.25],.035,mat(color));}box(g,.32,.04,.04,mat(color),0,.2,.15);box(g,.32,.04,.04,mat(color),0,.2,-.15);return g;}
 function chair(p,x,z,angle=0){const g=group(p,x,0,z,angle);box(g,.47,.09,.45,mat('#495d69'),0,.49,0);for(const a of [-.18,.18])for(const b of [-.17,.17])rod(g,[a,.02,b],[a,.49,b],.024,iron);box(g,.45,.48,.075,mat('#465a64'),0,.84,.19);rod(g,[-.18,.48,.2],[-.18,1.03,.2],.025);rod(g,[.18,.48,.2],[.18,1.03,.2],.025);return g;}
@@ -370,7 +370,7 @@ const newsArt=[new Image(),new Image()],newsCoverRefresh=[];
 function newsCover(i){const [title,subtitle,source,cell,accent]=newsTitles[i],c=document.createElement('canvas');c.width=384;c.height=560;const ctx=c.getContext('2d'),tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;
   const draw=()=>{ctx.fillStyle='#e8dfcb';ctx.fillRect(0,0,384,560);const img=newsArt[source];if(img.complete&&img.naturalWidth){const cw=img.width/3,ch=img.height/2,cx=(cell%3)*cw,cy=Math.floor(cell/3)*ch;ctx.drawImage(img,cx+3,cy+20,cw-6,Math.min(ch-34,520),0,0,384,560);}ctx.fillStyle=accent;ctx.fillRect(0,0,384,106);ctx.fillStyle='#f5efdb';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=(title.length>4?'bold 56px':'bold 72px')+' "Songti SC","PingFang SC",serif';ctx.fillText(title,192,51,368);ctx.font='bold 22px "PingFang SC",sans-serif';ctx.fillText(subtitle,192,90,364);ctx.fillStyle='rgba(20,22,24,.68)';ctx.fillRect(0,516,384,44);ctx.textAlign='left';ctx.fillStyle='#fff1d3';ctx.font='19px sans-serif';ctx.fillText(i===11?'2003 · 08':'2005 · '+String(3+i%5).padStart(2,'0'),14,544);ctx.textAlign='right';ctx.fillText('放学后的阅读',372,544);ctx.strokeStyle='rgba(255,248,224,.65)';ctx.lineWidth=3;ctx.strokeRect(5,5,374,550);tex.needsUpdate=true;};
   newsCoverRefresh.push(draw);draw();return new T.MeshStandardMaterial({map:tex,roughness:.9,side:T.DoubleSide});}
-const newsCovers=newsTitles.map((_,i)=>newsCover(i));newsArt.forEach((img,i)=>{img.onload=()=>newsCoverRefresh.forEach(draw=>draw());img.src='./textures/newsstand-'+(i?'culture':'literature')+'-art-atlas.jpg';});
+const newsCovers=newsTitles.map((_,i)=>newsCover(i));newsArt.forEach((img,i)=>{img.onload=()=>newsCoverRefresh.forEach(draw=>draw());img.src='./textures/fast/newsstand-'+(i?'culture':'literature')+'-art-atlas.webp';});
 function newsReverse(i,spine=false){const [title,subtitle,,,accent]=newsTitles[i],c=document.createElement('canvas');c.width=spine?128:384;c.height=560;const q=c.getContext('2d');q.fillStyle=accent;q.fillRect(0,0,c.width,c.height);q.fillStyle='#e7dece';q.fillRect(10,13,c.width-20,c.height-26);q.fillStyle=accent;if(spine){q.fillRect(10,13,c.width-20,70);q.save();q.translate(67,515);q.rotate(-Math.PI/2);q.font='bold 42px "Songti SC",serif';q.textAlign='center';q.fillText(title,245,0,430);q.restore();}else{q.textAlign='center';q.font='bold 36px "Songti SC",serif';q.fillText(title,192,74,345);q.font='22px "Songti SC",serif';q.fillText(subtitle,192,111,340);q.textAlign='left';for(let n=0;n<12;n++){q.fillStyle=n%3?'#887f708f':'#b7aa96';q.fillRect(35,160+n*22,306-(n%4)*31,4);}q.fillStyle='#faf4e8';q.fillRect(215,425,128,78);for(let b=0;b<35;b++){q.fillStyle='#2b2927';q.fillRect(226+b*3,433,b%5===0?3:1,48-(b%4)*3);}q.font='18px sans-serif';q.fillStyle=accent;q.fillText('2005 · 街边读物',35,518);}
   const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;return new T.MeshStandardMaterial({map:tex,roughness:.89});}
 const newsBacks=newsTitles.map((_,i)=>newsReverse(i)),newsSpines=newsTitles.map((_,i)=>newsReverse(i,true));
@@ -515,7 +515,7 @@ for(const [toggle,volume,key] of [['musicToggle','musicVolume','music'],['ambien
 }
 document.querySelectorAll('#seasonCtrl button,#weatherCtrl button,#timeCtrl button,#viewCtrl button,.scene-tab').forEach(b=>b.addEventListener('click',()=>soundscape.playEffect('tap')));
 const download=(blob,name)=>{const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);};
-document.querySelector('#shotBtn').onclick=()=>{soundscape.playEffect('shutter');renderer.render(scene,camera);canvas.toBlob(b=>download(b,'放学以后_模型截图.png'));toast('场景截图已导出');};
+document.querySelector('#shotBtn').onclick=()=>{soundscape.playEffect('shutter');renderer.render(scene,camera);canvas.toBlob(b=>download(b,'放学以后_模型截图.webp'));toast('场景截图已导出');};
 let recorder=null,stream=null,videoStream=null;
 document.querySelector('#recordBtn').onclick=()=>{
   if(recorder&&recorder.state==='recording'){recorder.stop();return;}
@@ -541,7 +541,7 @@ document.querySelector('#recordBtn').onclick=()=>{
   document.querySelector('#recordLabel').textContent='停止';document.querySelector('#recordBtn').classList.add('recording');
 };
 for(const id of ['closeHelp','gotIt'])document.querySelector('#'+id).onclick=()=>document.querySelector('#helpModal').classList.add('hidden');document.querySelector('#helpBtn').onclick=()=>document.querySelector('#helpModal').classList.remove('hidden');
-const gameStill=new Image(),tvStill=new Image();gameStill.src='./textures/fictional-cyber-screens-v1.jpg';tvStill.src='./textures/fictional-tv-stills-v1.jpg';
+const gameStill=new Image(),tvStill=new Image();gameStill.src='./textures/fast/fictional-cyber-screens-v1.webp';tvStill.src='./textures/fast/fictional-tv-stills-v1.webp';
 const customScreens={tv:[],game:[]},customUrls={tv:[],game:[]};
 const videoMimeByExtension={mp4:'video/mp4',m4v:'video/mp4',mov:'video/quicktime',webm:'video/webm',ogv:'video/ogg'};
 const imageExtensions=/\.(avif|bmp|gif|jpe?g|png|webp)$/i;

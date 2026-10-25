@@ -1,13 +1,13 @@
 import * as T from './vendor/three.module.js';
-import {createMilkTeaCup} from './milk-tea-kit.js?v=44-soft-mirror';
+import {createMilkTeaCup} from './milk-tea-kit.js?v=45-mobile-webp-textures';
 
 // Object photography and period typography are deliberately separate layers:
 // generated images provide the goods, while canvas keeps Chinese copy exact.
-const atlasFiles={tea:'tea-objects-atlas-v1.jpg',noodles:'food-objects-atlas-v1.jpg',mianpi:'food-objects-atlas-v1.jpg',bakery:'food-objects-atlas-v1.jpg',shop:'shop-products-atlas-v1.jpg',fashion:'fashion-garments-atlas-v1.png',bookshop:'rental-books-atlas-v1.jpg'};
+const atlasFiles={tea:'tea-objects-atlas-v1.webp',noodles:'food-objects-atlas-v1.webp',mianpi:'food-objects-atlas-v1.webp',bakery:'food-objects-atlas-v1.webp',shop:'shop-products-atlas-v1.webp',fashion:'fashion-garments-atlas-v1.webp',bookshop:'rental-books-atlas-v1.webp'};
 const foodLoader=new T.TextureLoader();
 const mealTexture={
-  noodles:foodLoader.load('./textures/noodle-soup-top-uv-v1.jpg'),
-  mianpi:foodLoader.load('./textures/mianpi-top-uv-v1.jpg')
+  noodles:foodLoader.load('./textures/fast/noodle-soup-top-uv-v1.webp'),
+  mianpi:foodLoader.load('./textures/fast/mianpi-top-uv-v1.webp')
 };
 for(const [kind,tex] of Object.entries(mealTexture)){tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;if(kind==='mianpi'){tex.repeat.set(.91,.91);tex.offset.set(.045,.045);}}
 const mealMaterials=Object.fromEntries(Object.entries(mealTexture).map(([kind,map])=>[kind,new T.MeshStandardMaterial({map,roughness:.57,side:T.DoubleSide})]));
@@ -17,7 +17,7 @@ const bowlMaterial=new T.MeshStandardMaterial({color:'#dfdbcc',roughness:.58}),r
 const loaded={};
 for(const [kind,file] of Object.entries(atlasFiles)){
   if(loaded[file])continue;
-  const image=new Image();image.src='./textures/'+file;loaded[file]=image;
+  const image=new Image();image.src='./textures/fast/'+file.replace(/\.(png|jpe?g)$/i,'.webp');loaded[file]=image;
 }
 const specs={
   tea:{title:'七杯茶',sub:'放学路上 · 来一杯',items:['珍珠奶茶  3元','红豆奶茶  4元','柠檬绿茶  3元'],photos:[0,1,2,4],paper:'#e9dcb9',ink:'#315c51'},
@@ -65,8 +65,8 @@ function art(kind,variant){
 }
 const mediaPosterSlots=[];
 const mediaSources={tv:new Image(),game:new Image()};
-mediaSources.tv.src='./textures/fictional-tv-stills-v1.jpg';
-mediaSources.game.src='./textures/fictional-cyber-screens-v1.jpg';
+mediaSources.tv.src='./textures/fast/fictional-tv-stills-v1.webp';
+mediaSources.game.src='./textures/fast/fictional-cyber-screens-v1.webp';
 function mediaPoster(kind,variant){
   const canvas=document.createElement('canvas');canvas.width=512;canvas.height=768;
   const g=canvas.getContext('2d'),texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=8;
