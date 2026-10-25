@@ -555,9 +555,13 @@ function mediaFileType(file){
 for(const [kind,button,input,mediaKind] of [['tv','importTvVideoBtn','tvVideoFiles','video'],['tv','importTvImageBtn','tvImageFiles','image'],['game','importGameBtn','gameFiles','image']]){
   document.querySelector('#'+button).onclick=()=>document.querySelector('#'+input).click();
   document.querySelector('#'+input).onchange=e=>{
-    for(const source of customScreens[kind])if(source.tagName==='VIDEO')source.pause();
-    for(const url of customUrls[kind])URL.revokeObjectURL(url);
-    customUrls[kind]=[];customScreens[kind]=[];
+    const keptScreens=[],keptUrls=[];
+    customScreens[kind].forEach((source,index)=>{
+      const sourceKind=source.tagName==='VIDEO'?'video':'image';
+      if(kind==='tv'&&sourceKind!==mediaKind){keptScreens.push(source);keptUrls.push(customUrls[kind][index]);}
+      else{if(source.tagName==='VIDEO')source.pause();URL.revokeObjectURL(customUrls[kind][index]);}
+    });
+    customScreens[kind]=keptScreens;customUrls[kind]=keptUrls;
     const files=[...e.target.files],rejected=[];
     if(!files.length){e.target.value='';return;}
     for(const file of files.slice(0,8)){
