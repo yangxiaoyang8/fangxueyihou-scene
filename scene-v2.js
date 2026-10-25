@@ -552,7 +552,7 @@ function mediaFileType(file){
   if(file.type.startsWith('image/')||imageExtensions.test(file.name))return {kind:'image',mime:file.type};
   return null;
 }
-for(const [kind,button,input] of [['tv','importTvBtn','tvFiles'],['game','importGameBtn','gameFiles']]){
+for(const [kind,button,input,mediaKind] of [['tv','importTvVideoBtn','tvVideoFiles','video'],['tv','importTvImageBtn','tvImageFiles','image'],['game','importGameBtn','gameFiles','image']]){
   document.querySelector('#'+button).onclick=()=>document.querySelector('#'+input).click();
   document.querySelector('#'+input).onchange=e=>{
     for(const source of customScreens[kind])if(source.tagName==='VIDEO')source.pause();
@@ -563,7 +563,7 @@ for(const [kind,button,input] of [['tv','importTvBtn','tvFiles'],['game','import
     for(const file of files.slice(0,8)){
       if(kind==='tv'&&file.size>10*1024*1024){rejected.push(file.name+' 超过 10 MB');continue;}
       const type=mediaFileType(file),isVideo=kind==='tv'&&type?.kind==='video';
-      if(!type||(!isVideo&&type.kind!=='image')){rejected.push(file.name+' 格式不支持');continue;}
+      if(!type||type.kind!==mediaKind){rejected.push(file.name+' 格式不支持');continue;}
       const source=isVideo?document.createElement('video'):new Image();
       const url=URL.createObjectURL(file);customUrls[kind].push(url);customScreens[kind].push(source);
       if(isVideo){

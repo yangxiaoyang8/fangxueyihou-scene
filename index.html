@@ -45,7 +45,7 @@
           <div class="wide-toggle"><span><b>打开建筑剖面</b><small>掀顶并展开临街立面</small></span><label class="switch"><input id="openBuilding" type="checkbox"><i></i></label></div>
           <div class="device-list"><label class="device"><span class="device-icon lamp">✦</span><span><b>店铺灯光</b><small>室内灯 / 招牌</small></span><input type="checkbox" id="lightsToggle" checked><i class="mini-switch"></i></label></div>
         </div>
-      <section class="control-group compact"><div class="group-title"><span>店内电子设备与素材</span><small>电视 / 游戏机屏幕</small></div><div class="device-list"><label class="device"><span class="device-icon tv">▣</span><span><b>电视 / CRT 屏幕</b><small>点击室内屏幕切换</small></span><input type="checkbox" id="screensToggle" checked><i class="mini-switch"></i></label></div><div class="segmented"><button id="importTvBtn" type="button">导入电视图片 / 视频 / GIF</button><button id="importGameBtn" type="button">导入授权游戏图</button></div><button id="importPosterBtn" type="button">导入授权海报 / 明星照片</button><input id="tvFiles" type="file" accept="image/*,video/*,.mp4,.m4v,.mov,.webm,.ogv" multiple hidden><input id="gameFiles" type="file" accept="image/*" multiple hidden><input id="posterFiles" type="file" accept="image/*" multiple hidden><small>每个电视素材不超过 10 MB；素材仅在本机预览，不会上传服务器。视频静音循环。</small></section>
+      <section class="control-group compact"><div class="group-title"><span>店内电子设备与素材</span><small>电视 / 游戏机屏幕</small></div><div class="device-list"><label class="device"><span class="device-icon tv">▣</span><span><b>电视 / CRT 屏幕</b><small>点击室内屏幕切换</small></span><input type="checkbox" id="screensToggle" checked><i class="mini-switch"></i></label></div><div class="segmented"><button id="importTvVideoBtn" type="button">选择电视视频</button><button id="importTvImageBtn" type="button">选择图片 / GIF</button></div><button id="importGameBtn" type="button">导入授权游戏图</button><button id="importPosterBtn" type="button">导入授权海报 / 明星照片</button><input id="tvVideoFiles" type="file" accept="video/*,.mp4,.m4v,.mov,.webm,.ogv" multiple hidden><input id="tvImageFiles" type="file" accept="image/*,.gif" multiple hidden><input id="gameFiles" type="file" accept="image/*" multiple hidden><input id="posterFiles" type="file" accept="image/*" multiple hidden><small>电视视频与图片分别选择；每个文件不超过 10 MB。素材只在本机预览，不会上传服务器。视频静音循环。</small></section>
       </div>
       <div class="mobile-control-view" id="mobileEnvironmentView" data-mobile-view="environment" role="tabpanel" aria-labelledby="mobileTabEnvironment">
       <section class="control-group" id="environmentControls"><div class="group-title"><span>季节</span><small id="seasonValue">春</small></div><div class="segmented" id="seasonCtrl"><button class="selected" data-value="spring">春</button><button data-value="summer">夏</button><button data-value="autumn">秋</button><button data-value="winter">冬</button></div></section>
@@ -74,6 +74,6 @@
   </main>
   <script src="startup-guard.js?v=1"></script>
   <script src="mobile-controls.js?v=4" defer></script>
-  <script type="module" src="scene-v2.js?v=91-mobile-webp-textures"></script>
+  <script type="module" src="scene-v2.js?v=92-video-picker-split"></script>
 </body>
 </html>
