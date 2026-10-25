@@ -1,3 +1,4 @@
+import {texturePath} from './texture-format.js';
 import * as T from './vendor/three.module.js';
 import {GLTFLoader} from './vendor/addons/loaders/GLTFLoader.js';
 import {RoundedBoxGeometry} from './vendor/RoundedBoxGeometry.js';
@@ -28,7 +29,7 @@ function atlasTiles(url,transparent=false){
   }});
   return materials;
 }
-const productFaces=atlasTiles('./textures/fast/shop-products-atlas-v1.webp');
+const productFaces=atlasTiles(texturePath('./textures/fast/shop-products-atlas-v1.webp'));
 // One unfolded packaging atlas supplies the backs, both narrow sides and the
 // crimped top/bottom of each item. The existing high-resolution fronts remain.
 function productWrapAtlas(){
@@ -49,7 +50,7 @@ function productWrapAtlas(){
       return new T.MeshStandardMaterial({map:tile,roughness:.68,side:T.DoubleSide});
     });
   });
-  const art=new Image();art.src='./textures/fast/shop-products-atlas-v1.webp';
+  const art=new Image();art.src=texturePath('./textures/fast/shop-products-atlas-v1.webp');
   const colors=['#ab493e','#c69c61','#426380','#b85b68','#a1754a','#8197a1','#c58637','#71915d','#b1514f','#7a544b','#a95b70','#bd6349','#536981','#d68b4c','#71909d','#c3b39b'];
   art.onload=()=>{
     for(let item=0;item<16;item++){
@@ -86,30 +87,30 @@ function productWrapAtlas(){
   return sides;
 }
 const productWrapFaces=productWrapAtlas();
-const garmentFaces=atlasTiles('./textures/fast/fashion-garments-atlas-v1.webp',true);
+const garmentFaces=atlasTiles(texturePath('./textures/fast/fashion-garments-atlas-v1.webp'),true);
 // Nine individually cropped accessory fronts, mounted on real hooks/cards below.
 // The atlas is not a wall poster: each tile belongs to a separate shop object.
 const accessoryFaces=Array.from({length:9},()=>new T.MeshStandardMaterial({color:'#fff',transparent:true,opacity:0,alphaTest:.08,side:T.DoubleSide,roughness:.84,depthWrite:true}));
-new T.TextureLoader().load('./textures/fast/fashion-accessories-atlas-v1.webp',atlas=>accessoryFaces.forEach((m,i)=>{
+new T.TextureLoader().load(texturePath('./textures/fast/fashion-accessories-atlas-v1.webp'),atlas=>accessoryFaces.forEach((m,i)=>{
   const tile=atlas.clone();tile.colorSpace=T.SRGBColorSpace;
   tile.repeat.set(.318,.318);tile.offset.set((i%3)/3+.007,(2-Math.floor(i/3))/3+.007);
   tile.anisotropy=8;tile.needsUpdate=true;m.map=tile;m.opacity=1;m.needsUpdate=true;
 }));
-const plumBagMap=new T.TextureLoader().load('./textures/fast/fashion-plum-tote-front-v1.webp');
+const plumBagMap=new T.TextureLoader().load(texturePath('./textures/fast/fashion-plum-tote-front-v1.webp'));
 plumBagMap.colorSpace=T.SRGBColorSpace;plumBagMap.anisotropy=8;
 const plumBagFabric=new T.MeshStandardMaterial({map:plumBagMap,roughness:.93,side:T.DoubleSide});
 // Torso crops become printed cloth on the *top of folded garments*, not wall decals.
 const foldFaces=Array.from({length:12},()=>new T.MeshStandardMaterial({color:'#ffffff',transparent:true,alphaTest:.08,roughness:.95,side:T.DoubleSide}));
-new T.TextureLoader().load('./textures/fast/fashion-garments-atlas-v1.webp',atlas=>foldFaces.forEach((m,i)=>{const t=atlas.clone();t.colorSpace=T.SRGBColorSpace;t.repeat.set(.133,.112);t.offset.set((i%4)*.25+.058,(3-Math.floor(i/4))*.25+.055);t.anisotropy=8;t.needsUpdate=true;m.map=t;m.needsUpdate=true;}));
-const crustMap=new T.TextureLoader().load('./textures/fast/bakery-crust-uv-v1.webp');crustMap.colorSpace=T.SRGBColorSpace;crustMap.wrapS=crustMap.wrapT=T.RepeatWrapping;crustMap.repeat.set(2.5,2.5);crustMap.anisotropy=8;
+new T.TextureLoader().load(texturePath('./textures/fast/fashion-garments-atlas-v1.webp'),atlas=>foldFaces.forEach((m,i)=>{const t=atlas.clone();t.colorSpace=T.SRGBColorSpace;t.repeat.set(.133,.112);t.offset.set((i%4)*.25+.058,(3-Math.floor(i/4))*.25+.055);t.anisotropy=8;t.needsUpdate=true;m.map=t;m.needsUpdate=true;}));
+const crustMap=new T.TextureLoader().load(texturePath('./textures/fast/bakery-crust-uv-v1.webp'));crustMap.colorSpace=T.SRGBColorSpace;crustMap.wrapS=crustMap.wrapT=T.RepeatWrapping;crustMap.repeat.set(2.5,2.5);crustMap.anisotropy=8;
 const crustMat=new T.MeshStandardMaterial({map:crustMap,roughness:.78});
 const trayLoader=new T.TextureLoader();
 const soupIngredientMaterials=['#e2bd87','#dcc5a0','#6d9c59','#81583b'].map(color=>new T.MeshStandardMaterial({color,roughness:.72}));
-new T.TextureLoader().load('./textures/fast/malatang-tray-top-uv-v1.webp',atlas=>{
+new T.TextureLoader().load(texturePath('./textures/fast/malatang-tray-top-uv-v1.webp'),atlas=>{
   const crops=[[.66,.04,.30,.43],[.02,.55,.30,.39],[.34,.55,.30,.40],[.28,.04,.31,.41]];
   soupIngredientMaterials.forEach((material,i)=>{const [x,y,w,h]=crops[i],tile=atlas.clone();tile.colorSpace=T.SRGBColorSpace;tile.repeat.set(w,h);tile.offset.set(x,y);tile.anisotropy=8;tile.needsUpdate=true;material.map=tile;material.color.set('#ffffff');material.needsUpdate=true;});
 });
-const friedTrayMap=trayLoader.load('./textures/fast/fried-skewer-tray-top-uv-v1.webp');friedTrayMap.colorSpace=T.SRGBColorSpace;friedTrayMap.anisotropy=8;
+const friedTrayMap=trayLoader.load(texturePath('./textures/fast/fried-skewer-tray-top-uv-v1.webp'));friedTrayMap.colorSpace=T.SRGBColorSpace;friedTrayMap.anisotropy=8;
 const friedTrayMaterial=new T.MeshStandardMaterial({map:friedTrayMap,roughness:.63,side:T.DoubleSide});
 
 // All dimensions are scene metres. Every shop keeps a clear entrance and a working aisle.
@@ -122,7 +123,7 @@ export function createDistrictKit(a){
   {const v=pouchGeometry.attributes.position;for(let n=0;n<v.count;n++){const x=v.getX(n),y=v.getY(n),z=v.getZ(n);v.setXYZ(n,x*(.91+.1*(1-Math.abs(y)*2)),y,z+Math.sign(z)*.16*(1-Math.abs(x)*1.4)*(1-Math.abs(y)*1.4));}pouchGeometry.computeVertexNormals();}
   const packetSides=colors.map(color=>mat(color,.49));
   const labelNames=['冰红茶','橘子汽水','绿茶','汽水','矿泉水'];
-  const drinkArt=new Image();drinkArt.src='./textures/fast/period-drink-labels-v1.webp';
+  const drinkArt=new Image();drinkArt.src=texturePath('./textures/fast/period-drink-labels-v1.webp');
   const bottleLabels=labelNames.map((name,i)=>{const c=document.createElement('canvas');c.width=1024;c.height=256;const g=c.getContext('2d'),t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=T.RepeatWrapping;t.anisotropy=8;
     const draw=()=>{if(drinkArt.complete&&drinkArt.naturalWidth)g.drawImage(drinkArt,0,(i%4)*drinkArt.height/4,drinkArt.width,drinkArt.height/4,0,0,1024,256);else{g.fillStyle=['#a56b3d','#e78e30','#46825b','#a95235','#538ead'][i];g.fillRect(0,0,1024,256);}g.fillStyle='#faf1ddeb';g.fillRect(330,58,364,143);g.fillStyle='#31534a';g.textAlign='center';g.font='bold 83px "Songti SC",serif';g.fillText(name,512,163);t.needsUpdate=true;};draw();drinkArt.addEventListener('load',draw);return new T.MeshStandardMaterial({map:t,roughness:.61,side:T.DoubleSide});});
   function soft(p,w,h,d,m,x,y,z,r=.035){return mesh(p,new RoundedBoxGeometry(w,h,d,1,Math.min(r,w/5,h/5,d/5)),m,x,y,z);}
@@ -228,7 +229,7 @@ export function createDistrictKit(a){
   }
   function barber(p,w,d){
     const mirror=new T.MeshBasicMaterial({color:'#dce6e3',side:T.DoubleSide,toneMapped:false});
-    const studentMap=new T.TextureLoader().load('./textures/fast/student-mirror-reflection-v1.webp');studentMap.colorSpace=T.SRGBColorSpace;studentMap.anisotropy=8;
+    const studentMap=new T.TextureLoader().load(texturePath('./textures/fast/student-mirror-reflection-v1.webp'));studentMap.colorSpace=T.SRGBColorSpace;studentMap.anisotropy=8;
     for(const x of [-1.0,.85]){
       soft(p,1.18,1.37,.10,mat('#405f59'),x,1.97,-d/2+.15);
       if(x<0){const surface=mesh(p,new T.PlaneGeometry(1.02,1.2),mirror.clone(),x,1.97,-d/2+.24);surface.name='barber-reflection-surface';surface.castShadow=false;surface.userData.dynamic=true;
