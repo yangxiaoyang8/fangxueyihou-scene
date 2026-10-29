@@ -1,4 +1,4 @@
-import {texturePath} from './texture-format.js';
+import {texturePath,createTextureLoader} from './texture-format.js?v=102-shared-textures';
 import * as T from './vendor/three.module.js';
 
 // Shared low-poly archetype: the cone's built-in groups UV-map its side and top separately.
@@ -30,7 +30,7 @@ function draftTopTexture(v){
   g.strokeStyle='#eff3e6bc';g.lineWidth=17;g.beginPath();g.arc(256,256,248,0,Math.PI*2);g.stroke();
   const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;return tex;
 }
-const loader=new T.TextureLoader();
+const loader=createTextureLoader();
 const pearlSide=loader.load(texturePath('./textures/fast/tea-pearl-side-uv-v1.webp'));pearlSide.colorSpace=T.SRGBColorSpace;pearlSide.anisotropy=8;pearlSide.wrapS=T.RepeatWrapping;
 const pearlSeal=loader.load(texturePath('./textures/fast/tea-pearl-seal-uv-v1.webp'));pearlSeal.colorSpace=T.SRGBColorSpace;pearlSeal.anisotropy=8;
 function brandSide(source,i){const c=document.createElement('canvas');c.width=1024;c.height=512;const g=c.getContext('2d');const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;tex.wrapS=T.RepeatWrapping;

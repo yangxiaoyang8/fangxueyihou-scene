@@ -1,7 +1,8 @@
-import {texturePath} from './texture-format.js';
+import {texturePath,loadTextureImage,createTextureLoader,mobileTextures} from './texture-format.js?v=102-shared-textures';
 import * as T from './vendor/three.module.js';
 import {GLTFLoader} from './vendor/addons/loaders/GLTFLoader.js';
 import {RoundedBoxGeometry} from './vendor/RoundedBoxGeometry.js';
+import {createMilkTeaCup} from './milk-tea-kit.js?v=102-shared-textures';
 
 // One image supplies many distinct object fronts; every packet and garment remains
 // a separate piece of scene geometry. Tile textures share the decoded image.
@@ -20,7 +21,7 @@ function atlasTiles(url,transparent=false){
     tiles.push(tile);
     return new T.MeshStandardMaterial({map:tile,transparent,alphaTest:transparent?.08:0,side:T.DoubleSide,roughness:.86,metalness:0});
   });
-  new T.TextureLoader().load(url,loaded=>{for(let i=0;i<tiles.length;i++){
+  createTextureLoader().load(url,loaded=>{for(let i=0;i<tiles.length;i++){
     // CanvasTexture clones share a Source; swapping .image later left the GPU
     // sampling the placeholder in some browsers. Replace the actual map.
     const tile=loaded.clone();tile.colorSpace=T.SRGBColorSpace;
@@ -33,8 +34,8 @@ const productFaces=atlasTiles(texturePath('./textures/fast/shop-products-atlas-v
 // One unfolded packaging atlas supplies the backs, both narrow sides and the
 // crimped top/bottom of each item. The existing high-resolution fronts remain.
 function productWrapAtlas(){
-  const source=document.createElement('canvas');source.width=source.height=2048;
-  const ctx=source.getContext('2d'),texture=new T.CanvasTexture(source);
+  const source=document.createElement('canvas');source.width=source.height=mobileTextures?1024:2048;
+  const ctx=source.getContext('2d'),texture=new T.CanvasTexture(source);ctx.scale(source.width/2048,source.height/2048);
   texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=8;
   const sides=Array.from({length:16},(_,item)=>{
     const cellX=(item%4)*512,cellY=Math.floor(item/4)*512;
@@ -50,7 +51,7 @@ function productWrapAtlas(){
       return new T.MeshStandardMaterial({map:tile,roughness:.68,side:T.DoubleSide});
     });
   });
-  const art=new Image();art.src=texturePath('./textures/fast/shop-products-atlas-v1.webp');
+  const art=loadTextureImage('./textures/fast/shop-products-atlas-v1.webp');
   const colors=['#ab493e','#c69c61','#426380','#b85b68','#a1754a','#8197a1','#c58637','#71915d','#b1514f','#7a544b','#a95b70','#bd6349','#536981','#d68b4c','#71909d','#c3b39b'];
   art.onload=()=>{
     for(let item=0;item<16;item++){
@@ -91,22 +92,22 @@ const garmentFaces=atlasTiles(texturePath('./textures/fast/fashion-garments-atla
 // Nine individually cropped accessory fronts, mounted on real hooks/cards below.
 // The atlas is not a wall poster: each tile belongs to a separate shop object.
 const accessoryFaces=Array.from({length:9},()=>new T.MeshStandardMaterial({color:'#fff',transparent:true,opacity:0,alphaTest:.08,side:T.DoubleSide,roughness:.84,depthWrite:true}));
-new T.TextureLoader().load(texturePath('./textures/fast/fashion-accessories-atlas-v1.webp'),atlas=>accessoryFaces.forEach((m,i)=>{
+createTextureLoader().load(texturePath('./textures/fast/fashion-accessories-atlas-v1.webp'),atlas=>accessoryFaces.forEach((m,i)=>{
   const tile=atlas.clone();tile.colorSpace=T.SRGBColorSpace;
   tile.repeat.set(.318,.318);tile.offset.set((i%3)/3+.007,(2-Math.floor(i/3))/3+.007);
   tile.anisotropy=8;tile.needsUpdate=true;m.map=tile;m.opacity=1;m.needsUpdate=true;
 }));
-const plumBagMap=new T.TextureLoader().load(texturePath('./textures/fast/fashion-plum-tote-front-v1.webp'));
+const plumBagMap=createTextureLoader().load(texturePath('./textures/fast/fashion-plum-tote-front-v1.webp'));
 plumBagMap.colorSpace=T.SRGBColorSpace;plumBagMap.anisotropy=8;
 const plumBagFabric=new T.MeshStandardMaterial({map:plumBagMap,roughness:.93,side:T.DoubleSide});
 // Torso crops become printed cloth on the *top of folded garments*, not wall decals.
 const foldFaces=Array.from({length:12},()=>new T.MeshStandardMaterial({color:'#ffffff',transparent:true,alphaTest:.08,roughness:.95,side:T.DoubleSide}));
-new T.TextureLoader().load(texturePath('./textures/fast/fashion-garments-atlas-v1.webp'),atlas=>foldFaces.forEach((m,i)=>{const t=atlas.clone();t.colorSpace=T.SRGBColorSpace;t.repeat.set(.133,.112);t.offset.set((i%4)*.25+.058,(3-Math.floor(i/4))*.25+.055);t.anisotropy=8;t.needsUpdate=true;m.map=t;m.needsUpdate=true;}));
-const crustMap=new T.TextureLoader().load(texturePath('./textures/fast/bakery-crust-uv-v1.webp'));crustMap.colorSpace=T.SRGBColorSpace;crustMap.wrapS=crustMap.wrapT=T.RepeatWrapping;crustMap.repeat.set(2.5,2.5);crustMap.anisotropy=8;
+createTextureLoader().load(texturePath('./textures/fast/fashion-garments-atlas-v1.webp'),atlas=>foldFaces.forEach((m,i)=>{const t=atlas.clone();t.colorSpace=T.SRGBColorSpace;t.repeat.set(.133,.112);t.offset.set((i%4)*.25+.058,(3-Math.floor(i/4))*.25+.055);t.anisotropy=8;t.needsUpdate=true;m.map=t;m.needsUpdate=true;}));
+const crustMap=createTextureLoader().load(texturePath('./textures/fast/bakery-crust-uv-v1.webp'));crustMap.colorSpace=T.SRGBColorSpace;crustMap.wrapS=crustMap.wrapT=T.RepeatWrapping;crustMap.repeat.set(2.5,2.5);crustMap.anisotropy=8;
 const crustMat=new T.MeshStandardMaterial({map:crustMap,roughness:.78});
-const trayLoader=new T.TextureLoader();
+const trayLoader=createTextureLoader();
 const soupIngredientMaterials=['#e2bd87','#dcc5a0','#6d9c59','#81583b'].map(color=>new T.MeshStandardMaterial({color,roughness:.72}));
-new T.TextureLoader().load(texturePath('./textures/fast/malatang-tray-top-uv-v1.webp'),atlas=>{
+createTextureLoader().load(texturePath('./textures/fast/malatang-tray-top-uv-v1.webp'),atlas=>{
   const crops=[[.66,.04,.30,.43],[.02,.55,.30,.39],[.34,.55,.30,.40],[.28,.04,.31,.41]];
   soupIngredientMaterials.forEach((material,i)=>{const [x,y,w,h]=crops[i],tile=atlas.clone();tile.colorSpace=T.SRGBColorSpace;tile.repeat.set(w,h);tile.offset.set(x,y);tile.anisotropy=8;tile.needsUpdate=true;material.map=tile;material.color.set('#ffffff');material.needsUpdate=true;});
 });
@@ -115,7 +116,7 @@ const friedTrayMaterial=new T.MeshStandardMaterial({map:friedTrayMap,roughness:.
 
 // All dimensions are scene metres. Every shop keeps a clear entrance and a working aisle.
 export function createDistrictKit(a){
-  const {group,box,cyl,orb,rod,mesh,mat,table,chair,stool,crt,fan,plant,fixture,label,wood,iron,cream,timber,roofFinish,metalPBR,ceramic,fabric,bookCovers,bookBacks,bookSpines,paperEdge}=a;
+  const {group,box,cyl,orb,rod,mesh,mat,table,chair,stool,crt,fan,plant,fixture,label,wood,iron,cream,timber,roofFinish,metalPBR,ceramic,fabric,bookCovers,bookBacks,bookSpines,paperEdge,bookshelf,book}=a;
   const steel=mat('#a0aaa6',.34,.7), dark=mat('#28383c'), tile=ceramic;Object.assign(steel,metalPBR);steel.normalScale.set(.25,.25);steel.userData.metersPerTile=.8;
   const glass=new T.MeshStandardMaterial({color:'#a5cec8',transparent:true,opacity:.16,roughness:.2,depthWrite:false,side:T.DoubleSide});
   const colors=['#a64a3e','#548b79','#c3a859','#617f9b','#b88087'];
@@ -123,7 +124,7 @@ export function createDistrictKit(a){
   {const v=pouchGeometry.attributes.position;for(let n=0;n<v.count;n++){const x=v.getX(n),y=v.getY(n),z=v.getZ(n);v.setXYZ(n,x*(.91+.1*(1-Math.abs(y)*2)),y,z+Math.sign(z)*.16*(1-Math.abs(x)*1.4)*(1-Math.abs(y)*1.4));}pouchGeometry.computeVertexNormals();}
   const packetSides=colors.map(color=>mat(color,.49));
   const labelNames=['冰红茶','橘子汽水','绿茶','汽水','矿泉水'];
-  const drinkArt=new Image();drinkArt.src=texturePath('./textures/fast/period-drink-labels-v1.webp');
+  const drinkArt=loadTextureImage('./textures/fast/period-drink-labels-v1.webp');
   const bottleLabels=labelNames.map((name,i)=>{const c=document.createElement('canvas');c.width=1024;c.height=256;const g=c.getContext('2d'),t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=T.RepeatWrapping;t.anisotropy=8;
     const draw=()=>{if(drinkArt.complete&&drinkArt.naturalWidth)g.drawImage(drinkArt,0,(i%4)*drinkArt.height/4,drinkArt.width,drinkArt.height/4,0,0,1024,256);else{g.fillStyle=['#a56b3d','#e78e30','#46825b','#a95235','#538ead'][i];g.fillRect(0,0,1024,256);}g.fillStyle='#faf1ddeb';g.fillRect(330,58,364,143);g.fillStyle='#31534a';g.textAlign='center';g.font='bold 83px "Songti SC",serif';g.fillText(name,512,163);t.needsUpdate=true;};draw();drinkArt.addEventListener('load',draw);return new T.MeshStandardMaterial({map:t,roughness:.61,side:T.DoubleSide});});
   function soft(p,w,h,d,m,x,y,z,r=.035){return mesh(p,new RoundedBoxGeometry(w,h,d,1,Math.min(r,w/5,h/5,d/5)),m,x,y,z);}
@@ -229,7 +230,7 @@ export function createDistrictKit(a){
   }
   function barber(p,w,d){
     const mirror=new T.MeshBasicMaterial({color:'#dce6e3',side:T.DoubleSide,toneMapped:false});
-    const studentMap=new T.TextureLoader().load(texturePath('./textures/fast/student-mirror-reflection-v1.webp'));studentMap.colorSpace=T.SRGBColorSpace;studentMap.anisotropy=8;
+    const studentMap=createTextureLoader().load(texturePath('./textures/fast/student-mirror-reflection-v1.webp'));studentMap.colorSpace=T.SRGBColorSpace;studentMap.anisotropy=8;
     for(const x of [-1.0,.85]){
       soft(p,1.18,1.37,.10,mat('#405f59'),x,1.97,-d/2+.15);
       if(x<0){const surface=mesh(p,new T.PlaneGeometry(1.02,1.2),mirror.clone(),x,1.97,-d/2+.24);surface.name='barber-reflection-surface';surface.castShadow=false;surface.userData.dynamic=true;
@@ -311,7 +312,7 @@ export function createDistrictKit(a){
     new GLTFLoader().load('./blender_assets/canvas_sneaker_v1.glb?v=74-multisurface-uv',gltf=>{
       const uvColors=['blue','rose','sand','slate'];
       const uvMaps=uvColors.map(color=>{
-        const texture=new T.TextureLoader().load('./blender_assets/canvas_sneaker_uv_'+color+'.png?v=74');
+        const texture=createTextureLoader().load('./blender_assets/canvas_sneaker_uv_'+color+'.png?v=74');
         texture.colorSpace=T.SRGBColorSpace;
         texture.flipY=false; // glTF UV coordinates are already flipped for Three.js.
         texture.anisotropy=8;
@@ -438,5 +439,48 @@ export function createDistrictKit(a){
     else{rod(g,[0,.1,-.6],[0,2.45,-.6],.025,iron);const canopy=mesh(g,new T.ConeGeometry(1.5,.47,8,1,true),mat('#667c93'),0,2.48,-.6);canopy.rotation.y=.2;}
     label(g,soup?'麻 辣 烫':'现 炸 串 串',1.55,.35,c,'#e6cf9b',75).position.set(0,.6,.49);fixture(g,0,2.14,0,'#ffcd8f',3,'street');stool(g,1.4,.7,c);basket(g,-1.3,0,.5,.55,.4);return g;
   }
-  return {furnish,architecture,stall,basket,bottle,soft};
+  function preview(p,def,upper=false){
+    const {w,d,kind}=def;
+    // Real shop-specific props remain visible through street-facing windows.
+    // Detailed rooms are separate, so entering does not duplicate this stock.
+    if(kind==='bookshop'){
+      if(upper){box(p,1.5,.35,2.1,timber,-1.5,.32,-.7);box(p,1.45,.18,2.0,cream,-1.5,.59,-.7);box(p,1.35,.10,.36,mat('#d2c2a3'),-1.5,.74,-1.35);table(p,.8,-1,1.4,.8);chair(p,.8,-.1);box(p,.9,1.9,.6,timber,-2.1,.95,1.6);}
+      else{for(const x of [-1.5,.65]){const rack=bookshelf(p,1.95,true);rack.position.set(x,0,-d/2+.34);}const rack=bookshelf(p,2.8,true);rack.position.set(-w/2+.32,0,.1);rack.rotation.y=Math.PI/2;table(p,.95,.75,1.55,.75,.83);for(let i=0;i<3;i++)book(p,.5+i*.3,.9,.75,i,true);stool(p,.7,1.8,'#ad4932');}
+    }else if(kind==='cyber'){
+      for(const x of [-1.6,.45])for(const z of [-.6,.7]){const desk=table(p,x,z,1.5,.7,.76);crt(desk,0,.8,-.12);box(desk,.48,.025,.17,cream,0,.81,.21);chair(p,x,z+.65);}
+    }else if(kind==='tea'){
+      box(p,2.65,.92,.72,mat('#718d7c'),-.3,.56,.65);box(p,2.75,.07,.8,timber,-.3,1.05,.65);
+      for(let i=0;i<3;i++){const cup=createMilkTeaCup(i);cup.position.set(-.95+i*.4,1.09,.62);p.add(cup);}
+      box(p,w-.65,.9,.68,cream,0,.56,-d/2+.5);box(p,w-.5,.06,.76,steel,0,1.05,-d/2+.5);
+      for(const x of [-.8,.7]){box(p,.5,.65,.42,steel,x,1.41,-d/2+.46);box(p,.35,.15,.02,dark,x,1.48,-d/2+.69);}
+      stool(p,-.9,1.65,'#b58b70');stool(p,.35,1.65,'#b58b70');
+    }else if(kind==='shop'){
+      const back=shelf(p,-.4,-d/2+.34,w-1.2);
+      for(let row=0;row<3;row++)for(let j=0;j<6;j++)packet(back,-1.1+j*.42,.43+row*.44,.08,(row*6+j)%16,.25,.3,.09);
+      for(let j=0;j<6;j++)bottle(back,-1.1+j*.42,1.59,.08,j);
+      box(p,1.8,.9,.65,mat('#8d7555'),-.55,.5,d/2-.9);box(p,1.9,.06,.73,timber,-.55,.98,d/2-.9);box(p,.34,.19,.28,cream,.05,1.11,d/2-1.0);
+      const fridge=group(p,w/2-.5,0,-d/2+.65);box(fridge,.85,1.95,.9,mat('#993f35'),0,1,0);box(fridge,.7,1.6,.02,dark,0,1.03,.47);for(let j=0;j<3;j++)bottle(fridge,-.2+j*.2,.37,.5,j);
+    }else if(kind==='bakery'){
+      box(p,2.25,.7,.72,mat('#9e6b5d'),-.25,.44,.5);
+      for(const y of [.9,1.25]){box(p,2.18,.025,.68,steel,-.25,y,.5);for(let i=0;i<5;i++)bun(p,-1.1+i*.42,y+.08,.53,i,.8);}
+      box(p,2.25,.7,.012,glass,-.25,1.14,.86);box(p,2.25,.018,.76,glass,-.25,1.52,.5);
+      const back=shelf(p,-.7,-d/2+.35,2.15);for(let i=0;i<5;i++)bun(back,-.8+i*.4,1.18,0,i,.9);
+      box(p,.85,1.8,.88,steel,w/2-.62,.9,-d/2+.65);for(let r=0;r<3;r++)box(p,.7,.3,.025,dark,w/2-.62,.4+r*.5,-d/2+1.11);
+    }else if(kind==='fashion'){
+      rod(p,[-w/2+.55,.1,-1.2],[-w/2+.55,2.3,-1.2],.025,steel);rod(p,[-w/2+.55,2.3,-1.2],[-w/2+.55,2.3,1.1],.025,steel);
+      for(let i=0;i<4;i++)garment(p,-w/2+.6,1.7,-1+i*.6,i,i===1,Math.PI/2);
+      const island=table(p,.3,.5,1.2,.8,.75);for(let i=0;i<3;i++)box(island,.38,.07,.3,foldFaces[i],-.32+i*.32,.86,0);canvasBag(island,.3,.79,-.05,-.12).scale.setScalar(.65);
+    }else if(kind==='barber'){
+      for(const x of [-1,.85]){box(p,1.18,1.37,.1,mat('#405f59'),x,1.97,-d/2+.15);box(p,1.02,1.2,.015,mat('#aabbb7',.3,.2),x,1.97,-d/2+.22);box(p,1.35,.09,.43,timber,x,1.18,-d/2+.35);cyl(p,.31,.07,steel,x,.12,-.25);box(p,.58,.16,.6,mat('#6d3935'),x,.66,-.25);box(p,.6,.65,.14,mat('#6d3935'),x,.95,.03);}
+      box(p,.55,.22,1.35,fabric('#52726c'),-w/2+.4,.5,.92);box(p,.12,.55,1.35,fabric('#52726c'),-w/2+.16,.85,.92);
+    }else if(kind==='noodles'||kind==='mianpi'){
+      box(p,w-.55,.9,.78,mat(kind==='mianpi'?'#6c8f86':'#b0a993'),0,.5,-d/2+.62);box(p,w-.42,.07,.9,steel,0,.99,-d/2+.62);
+      cyl(p,.35,.48,steel,-1,1.27,-d/2+.6);cyl(p,.29,.02,mat('#9e6936'),-1,1.52,-d/2+.6);
+      for(const x of [-1.2,1.1]){table(p,x,1.0,.85,.65,.74);stool(p,x,1.65,'#79654d');cyl(p,.19,.075,cream,x,.82,1.0);cyl(p,.16,.012,mat(kind==='mianpi'?'#d2ad71':'#b0854f'),x,.865,1.0);}
+      for(let i=0;i<4;i++)bottle(p,-.1+i*.3,1.05,-d/2+.62,i,.8,'care');
+    }
+    const lit=new Map();
+    p.traverse(o=>{if(!o.isMesh)return;const lift=m=>{if(!m?.isMeshStandardMaterial||!m.map)return m;if(!lit.has(m)){const copy=m.clone();copy.emissive.copy(copy.color).multiplyScalar(.12);if(copy.map)copy.emissiveMap=copy.map;lit.set(m,copy);}return lit.get(m);};o.material=Array.isArray(o.material)?o.material.map(lift):lift(o.material);});
+  }
+  return {furnish,preview,architecture,stall,basket,bottle,soft};
 }

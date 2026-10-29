@@ -1,11 +1,11 @@
-import {texturePath} from './texture-format.js';
+import {texturePath,loadTextureImage,createTextureLoader,mobileTextures} from './texture-format.js?v=102-shared-textures';
 import * as T from './vendor/three.module.js';
-import {createMilkTeaCup} from './milk-tea-kit.js?v=47-texture-format-fallback';
+import {createMilkTeaCup} from './milk-tea-kit.js?v=102-shared-textures';
 
 // Object photography and period typography are deliberately separate layers:
 // generated images provide the goods, while canvas keeps Chinese copy exact.
 const atlasFiles={tea:'tea-objects-atlas-v1.webp',noodles:'food-objects-atlas-v1.webp',mianpi:'food-objects-atlas-v1.webp',bakery:'food-objects-atlas-v1.webp',shop:'shop-products-atlas-v1.webp',fashion:'fashion-garments-atlas-v1.webp',bookshop:'rental-books-atlas-v1.webp'};
-const foodLoader=new T.TextureLoader();
+const foodLoader=createTextureLoader();
 const mealTexture={
   noodles:foodLoader.load(texturePath('./textures/fast/noodle-soup-top-uv-v1.webp')),
   mianpi:foodLoader.load(texturePath('./textures/fast/mianpi-top-uv-v1.webp'))
@@ -18,7 +18,7 @@ const bowlMaterial=new T.MeshStandardMaterial({color:'#dfdbcc',roughness:.58}),r
 const loaded={};
 for(const [kind,file] of Object.entries(atlasFiles)){
   if(loaded[file])continue;
-  const image=new Image();image.src=texturePath('./textures/fast/'+file);loaded[file]=image;
+  loaded[file]=loadTextureImage('./textures/fast/'+file);
 }
 const specs={
   tea:{title:'七杯茶',sub:'放学路上 · 来一杯',items:['珍珠奶茶  3元','红豆奶茶  4元','柠檬绿茶  3元'],photos:[0,1,2,4],paper:'#e9dcb9',ink:'#315c51'},
@@ -32,8 +32,8 @@ const specs={
   bookshop:{title:'诸葛亮读书社',sub:'漫画 · 小说 · 学习资料',items:['漫画借阅  1元/本','旧书交换  请询店主','作文选  5元起'],photos:[0,2,5,10],paper:'#e2d2ae',ink:'#66503a'}
 };
 function art(kind,variant){
-  const s=specs[kind],canvas=document.createElement('canvas');canvas.width=512;canvas.height=768;
-  const g=canvas.getContext('2d'),tex=new T.CanvasTexture(canvas);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;
+  const s=specs[kind],canvas=document.createElement('canvas');canvas.width=mobileTextures?384:512;canvas.height=mobileTextures?576:768;
+  const g=canvas.getContext('2d'),tex=new T.CanvasTexture(canvas);g.scale(canvas.width/512,canvas.height/768);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;
   const draw=()=>{
     g.fillStyle=s.paper;g.fillRect(0,0,512,768);
     for(let i=0;i<1500;i++){g.fillStyle=i%3?'#594a2a0b':'#fff8e522';g.fillRect((i*131)%512,(i*71)%768,3,2);}
@@ -65,12 +65,10 @@ function art(kind,variant){
   return tex;
 }
 const mediaPosterSlots=[];
-const mediaSources={tv:new Image(),game:new Image()};
-mediaSources.tv.src=texturePath('./textures/fast/fictional-tv-stills-v1.webp');
-mediaSources.game.src=texturePath('./textures/fast/fictional-cyber-screens-v1.webp');
+const mediaSources={tv:loadTextureImage('./textures/fast/fictional-tv-stills-v1.webp'),game:loadTextureImage('./textures/fast/fictional-cyber-screens-v1.webp')};
 function mediaPoster(kind,variant){
-  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=768;
-  const g=canvas.getContext('2d'),texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=8;
+  const canvas=document.createElement('canvas');canvas.width=mobileTextures?384:512;canvas.height=mobileTextures?576:768;
+  const g=canvas.getContext('2d'),texture=new T.CanvasTexture(canvas);g.scale(canvas.width/512,canvas.height/768);texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=8;
   const source=kind==='cyber'?mediaSources.game:(loaded[atlasFiles[kind]]||mediaSources.tv);
   const titles={tea:['今日特饮','夏日冰茶'],noodles:['热汤米线','小锅现煮'],mianpi:['现拌擀面皮','辣椒香醋'],bakery:['每日出炉','放学点心'],shop:['零食上新','冰饮文具'],fashion:['换季新衣','学生搭配'],barber:['学生剪发','洗剪吹'],bookshop:['借阅新书','本周书架'],cyber:['网络对战','游戏之夜']};
   const title=(titles[kind]||['店内告示','今日供应'])[variant];
@@ -82,7 +80,7 @@ function mediaPoster(kind,variant){
 }
 export function applyAuthorizedPosters(files){
   const images=[...files].filter(f=>f.type.startsWith('image/')).slice(0,12);
-  images.forEach((file,i)=>{const url=URL.createObjectURL(file),image=new Image();image.onload=()=>{for(let k=i;k<mediaPosterSlots.length;k+=images.length){const slot=mediaPosterSlots[k],c=slot.canvas,g=c.getContext('2d');g.fillStyle='#e5dbc8';g.fillRect(0,0,c.width,c.height);const scale=Math.max(470/image.width,715/image.height),sw=470/scale,sh=715/scale;g.drawImage(image,(image.width-sw)/2,(image.height-sh)/2,sw,sh,21,21,470,715);slot.texture.needsUpdate=true;}URL.revokeObjectURL(url);};image.src=url;});
+  images.forEach((file,i)=>{const url=URL.createObjectURL(file),image=new Image();image.onload=()=>{for(let k=i;k<mediaPosterSlots.length;k+=images.length){const slot=mediaPosterSlots[k],c=slot.canvas,g=c.getContext('2d');g.fillStyle='#e5dbc8';g.fillRect(0,0,512,768);const scale=Math.max(470/image.width,715/image.height),sw=470/scale,sh=715/scale;g.drawImage(image,(image.width-sw)/2,(image.height-sh)/2,sw,sh,21,21,470,715);slot.texture.needsUpdate=true;}URL.revokeObjectURL(url);};image.src=url;});
   return images.length;
 }
 export function addPeriodPrints(parent,def){

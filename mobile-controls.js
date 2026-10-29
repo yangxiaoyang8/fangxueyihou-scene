@@ -23,7 +23,7 @@ function syncMobilePanel() {
 mobilePanelToggle.addEventListener('click', () => {
   setPanelExpanded(mobilePanel.classList.contains('is-collapsed'));
 });
-mobileQuery.addEventListener('change', syncMobilePanel);
+if(mobileQuery.addEventListener)mobileQuery.addEventListener('change',syncMobilePanel);else mobileQuery.addListener(syncMobilePanel);
 syncMobilePanel();
 
 document.querySelectorAll('.mobile-quicknav button').forEach(button => {
